@@ -1,10 +1,67 @@
-User
+
+
+### Notes
+
+compiling with makefile goes like this
+
+
+```bash
+clear
+make clean
+make
+clear
+make test
+./test/./test
+# installing
+
+sudo make install
+# uninstalling
+
+sudo make uninstall
+
+
+```
+
+compiling outer-xml tool goes easyer like this:
+
+```bash
+tcc -Wall -Wextra -Iinclude src/*.c test/*.c outer-xml.c -o outer-xml.exe
+```
+
+testing :
+```bash
+## from file
+./outer-xml.exe name < input.xml
+./outer-xml.exe com < input.xml
+./outer-xml.exe "com id=\"" < input.xml
+
+## from pipe output
+echo "<root><name>John</name><age>30</age><com><com id=\"1\">john</com><com id=\"2\">yes</com><com id=\"3\">HDYD?</com></com></root>" | ./outer-xml.exe name
+echo "<root><name>John</name><age>30</age><com><com id=\"1\">john</com><com id=\"2\">yes</com><com id=\"3\">HDYD?</com></com></root>" | ./outer-xml.exe com
+echo "<root><name>John</name><age>30</age><com><com id=\"1\">john</com><com id=\"2\">yes</com><com id=\"3\">HDYD?</com></com></root>" | ./outer-xml.exe "com id=\""
+
+## from heredoc ( stdin )
+./outer-xml.exe name <<EOF                                                                                                              <root><name>John</name><age>30</age><com><com id=\"1\">john</com><com id=\"2\">yes</com><com id=\"3\">HDYD?</com></com></root>
+EOF
+./outer-xml.exe com <<EOF                                                                                                              <root><name>John</name><age>30</age><com><com id=\"1\">john</com><com id=\"2\">yes</com><com id=\"3\">HDYD?</com></com></root>
+EOF
+./outer-xml.exe "com id=\"" <<EOF                                                                                                              <root><name>John</name><age>30</age><com><com id=\"1\">john</com><com id=\"2\">yes</com><com id=\"3\">HDYD?</com></com></root>
+EOF
+
+```
+
+## CHat GPT 3.5 conversation
+
+
+### User
 I need a C function that takes a xml string given by a char* xml and length given by int xml_len and another const char* tag and returns a char* containing all the text found between the xml tags named by tag.
-ChatGPT
+
+
+### ChatGPT
 You can achieve this by using a library like libxml2 to parse the XML and extract the text between the specified tags. Here's a C function that does this:
 
-c
-Copy code
+```c
+
 #include <stdio.h>
 #include <string.h>
 #include <libxml/parser.h>
@@ -67,46 +124,56 @@ int main() {
 
     return 0;
 }
+```
 Make sure you have the libxml2 library installed and linked in your project. This code defines a function extractTextFromXmlTag that takes the XML string, its length, and the tag name you want to extract. It returns a dynamically allocated string containing the text between the specified tags. Don't forget to free the memory allocated for the result after you're done with it.
 
-User
+### User
 where do i find libxml ?
-ChatGPT
+
+
+### ChatGPT
 You can typically find the libxml2 library in most Linux distributions' package repositories. If you're using a Debian-based distribution like Ubuntu, you can install it using the following command:
 
-bash
-Copy code
+```bash
+
 sudo apt-get install libxml2-dev
+```
 If you're using a Red Hat-based distribution like CentOS or Fedora, you can use the following command:
 
-bash
-Copy code
+```bash
+
 sudo yum install libxml2-devel
+```
 On macOS, you can use the Homebrew package manager to install libxml2:
 
-bash
-Copy code
+```bash
+
 brew install libxml2
+```
 On Windows, you can download precompiled binaries or use package managers like Cygwin or MSYS2 to install it.
 
 Please note that the installation process may vary depending on your specific operating system and package manager. Once libxml2 is installed, you should be able to compile and link your C program with it.
 
-User
+### User
 and the github repo ?
-ChatGPT
+
+
+### ChatGPT
 You can find the source code and more information about libxml2 on its GitHub repository. Here's the link to the repository:
 
 https://github.com/GNOME/libxml2
 
 You can use this repository to browse the source code, report issues, and find additional documentation related to libxml2.
 
-User
+### User
 write a vanilla C function that returns the complete text inside a given tag ( tag open and close included )
-ChatGPT
+
+
+### ChatGPT
 Certainly! Here's a simple C function that extracts the complete text, including the opening and closing tags, from a given XML tag:
 
-c
-Copy code
+```c
+
 #include <stdio.h>
 #include <string.h>
 
@@ -152,11 +219,12 @@ int main() {
 
     return 0;
 }
+```
 This function extractTextInsideTag takes the XML string and the tag you want to extract (including the opening tag <...>) and returns a dynamically allocated string containing the text inside that tag (including both opening and closing tags). Make sure to free the memory allocated for the result when you're done with it.
 
-User
+### User
 very good, now for strings you are going to use a struct string { char* s; int len} that you will equip with the following functions:
-
+```c
 string* string__alloc(const char* init_val);
 int string__free();
 int string_strstr(string* self,const char* find_str);
@@ -167,16 +235,18 @@ int string__append(const char* chars);
 please use this new class string to implement
 
 string* extractTextInsideTag(string* xml, const char* tag)
-
+```
 3 / 3
 
-ChatGPT
+
+
+### ChatGPT
 Sure, let's implement the string struct and its associated functions, and then modify the extractTextInsideTag function to use this string struct.
 
 Here's the string struct and the functions:
 
-c
-Copy code
+```c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -312,15 +382,18 @@ int main() {
 
     return 0;
 }
+```
 This code defines the string struct and provides functions for allocation, freeing, searching for a substring, concatenating, and appending strings. The extractTextInsideTag function uses the string struct to extract the text inside a tag, including the opening and closing tags. Make sure to free the string objects when you're done with them to avoid memory leaks.
 
-User
+### User
 write a c program that will test all string__ functions.
-ChatGPT
+
+
+### ChatGPT
 Certainly! Here's a C program that tests all the string__ functions we implemented:
 
-c
-Copy code
+```c
+
 #include <stdio.h>
 #include "string.h"  // Include your string.h file here
 
@@ -384,6 +457,7 @@ int main() {
 
     return 0;
 }
+```
 In this program, we test each of the string__ functions:
 
 string__alloc: Allocates strings and prints their contents.
@@ -393,7 +467,7 @@ string__append: Appends a character array to a string and prints the result.
 string_strstr: Searches for a substring in a string and prints its position.
 Make sure to include your string.h file with the string struct and functions in the same directory as this program.
 
-User
+### User
 generate a makefile that will make and run the tests, make and install xml_parser and strings libraries and headers and uninstall xml_parser and strings libraries and headers.
 
 string.c and string.h have been renamed to avoid conflicts to strings.h and strings.c
@@ -426,11 +500,13 @@ the current tree structure of the project is as follows:
 
 3 / 3
 
-ChatGPT
+
+
+### ChatGPT
 Here's a Makefile that fulfills your requirements:
 
-makefile
-Copy code
+```makefile
+
 CC := gcc
 CFLAGS := -Wall -Wextra -Iinclude
 LDFLAGS := -Llib
@@ -478,8 +554,9 @@ install:
 uninstall:
     $(RM) /usr/local/include/xml_parser.h /usr/local/include/strings.h /usr/local/lib/libxml_parser.a /usr/local/lib/libstrings.a
 This Makefile defines targets for building the libraries (xml_parser and strings), as well as for building the tests. It also includes targets for cleaning up, installing, and uninstalling the libraries and headers. Make sure the directory structure matches the one you provided.
+```
 
-User
+### User
 make test gives the following error:
 
 ```
@@ -491,13 +568,15 @@ gcc -Wall -Wextra -Iinclude -o bin/test obj/strings.test.o obj/test.o obj/xml_pa
 collect2: error: ld returned 1 exit status
 make: *** [Makefile:33: test] Error 1
 ```
-ChatGPT
+
+
+### ChatGPT
 The error indicates that the bin directory doesn't exist, and hence the linker is unable to create the test executable inside it. To fix this, we need to ensure that the bin directory is created before attempting to generate the test executable.
 
 We can modify the Makefile to include a target to create the bin directory if it doesn't exist. Here's the updated Makefile:
 
-makefile
-Copy code
+```makefile
+
 CC := gcc
 CFLAGS := -Wall -Wextra -Iinclude
 LDFLAGS := -Llib
@@ -547,9 +626,13 @@ install:
 
 uninstall:
     $(RM) /usr/local/include/xml_parser.h /usr/local/include/strings.h /usr/local/lib/libxml_parser.a /usr/local/lib/libstrings.a
+
+```
 This Makefile modification adds a target called $(BINDIR) to create the bin directory. The test target now depends on $(BINDIR) to ensure that the directory exists before attempting to create the test executable inside it.
 
-User
+### User
+
+```
 /usr/bin/ld: cannot find bin: file format not recognized
 /usr/bin/ld: obj/test.o: in function `test__strings':
 test.c:(.text+0x0): multiple definition of `test__strings'; obj/strings.test.o:strings.test.c:(.text+0x0): first defined here
@@ -557,15 +640,19 @@ test.c:(.text+0x0): multiple definition of `test__strings'; obj/strings.test.o:s
 xml_parser.test.c:(.text+0x0): multiple definition of `test__xml_parser'; obj/test.o:test.c:(.text+0x22c): first defined here
 collect2: error: ld returned 1 exit status
 make: *** [Makefile:36: test] Error 1
-ChatGPT
+```
+
+
+
+### ChatGPT
 The error you're encountering indicates that there are multiple definitions of the functions test__strings and test__xml_parser across different object files. This happens because these functions are defined both in the individual test files (strings.test.c and xml_parser.test.c) and in the main test file (test.c). To resolve this issue, we should ensure that these functions are declared as static in the individual test files, so they are only visible within their respective translation units.
 
 Here's how you can modify the individual test files to declare these functions as static:
 
 strings.test.c:
 
-c
-Copy code
+```c
+
 #include <stdio.h>
 #include "strings.h"
 
@@ -580,10 +667,11 @@ int main() {
 
     return 0;
 }
+```
 xml_parser.test.c:
 
-c
-Copy code
+```c
+
 #include <stdio.h>
 #include "xml_parser.h"
 
@@ -598,17 +686,20 @@ int main() {
 
     return 0;
 }
+```
 With these changes, the test__strings and test__xml_parser functions will only be visible within their respective translation units, avoiding the multiple definition error.
 
-User
+### User
 the bin folder is not created
-ChatGPT
+
+
+### ChatGPT
 Apologies for the oversight. Let's modify the Makefile to ensure the bin directory is created before attempting to compile the tests. We'll add a target to create the bin directory.
 
 Here's the updated Makefile:
 
-makefile
-Copy code
+```makefile
+
 CC := gcc
 CFLAGS := -Wall -Wextra -Iinclude
 LDFLAGS := -Llib
@@ -660,9 +751,10 @@ install:
 
 uninstall:
     $(RM) /usr/local/include/xml_parser.h /usr/local/include/strings.h /usr/local/lib/libxml_parser.a /usr/local/lib/libstrings.a
+```
 With this modification, the $(BINDIR) target ensures that the bin directory is created before compiling the tests. Additionally, we ensure that the test target depends on $(TEST_TARGET), which is the path to the test executable.
 
-User
+### User
 very good.
 
 now lets go back to the function extractTextInsideTag.
@@ -670,11 +762,13 @@ now lets go back to the function extractTextInsideTag.
 your solution assumes that the tag name is given braces include, which is not correct.
 
 The function takes the tag name const char* tag_name the algorhithm should find the opening and closing tag given by the tag_name.
-ChatGPT
+
+
+### ChatGPT
 Thank you for clarifying. If the tag name is provided without braces, we need to adjust the algorithm to search for the opening and closing tags based on the tag name. Here's the updated extractTextInsideTag function:
 
-c
-Copy code
+```c
+
 string* extractTextInsideTag(string* xml, const char* tag_name) {
     if (xml == NULL || xml->s == NULL || tag_name == NULL) {
         return NULL;
@@ -713,16 +807,19 @@ string* extractTextInsideTag(string* xml, const char* tag_name) {
 
     return result;
 }
+```
 With this updated implementation, we construct the opening and closing tags based on the provided tag name. Then, we search for these tags in the XML string and extract the text inside them, including the tags themselves. Finally, we return a string object containing the extracted text.
 
-User
+### User
 for the opening tag you should match "<%s>" or "<%s .*?>
 self closing tags are unsupported for now.
-ChatGPT
+
+
+### ChatGPT
 Thank you for the clarification. Here's the updated extractTextInsideTag function to handle both regular and self-closing tags:
 
-c
-Copy code
+```c
+
 string* extractTextInsideTag(string* xml, const char* tag_name) {
     if (xml == NULL || xml->s == NULL || tag_name == NULL) {
         return NULL;
@@ -771,9 +868,10 @@ string* extractTextInsideTag(string* xml, const char* tag_name) {
 
     return result;
 }
+```
 This updated implementation ensures that the opening tag is matched with "<tag_name>" (without attributes), and it correctly finds the text inside the tags. We construct the closing tag using the provided tag name and then search for it to determine the end of the text within the tags. Finally, we return a string object containing the extracted text.
 
-User
+### User
 good job !
 
 now lets make extractTextInsideTag a bit more efficient:
@@ -782,11 +880,13 @@ iterate through the input xml one character at a time. if the character is '<' t
 
 2 / 2
 
-ChatGPT
+
+
+### ChatGPT
 Certainly! Here's the updated extractTextInsideTag function following the more efficient approach you described:
 
-c
-Copy code
+```c
+
 string* extractTextInsideTag(string* xml, const char* tag_name) {
     if (xml == NULL || xml->s == NULL || tag_name == NULL) {
         return NULL;
@@ -851,9 +951,10 @@ string* extractTextInsideTag(string* xml, const char* tag_name) {
 
     return NULL;
 }
+```
 This updated implementation iterates through the XML string one character at a time, checking for opening and closing tags efficiently. It maintains a count of opening tags encountered so far and saves the start and end pointers when appropriate. Finally, it extracts the text between the start and end pointers and returns it as a string object.
 
-User
+### User
 excellent 1 perfect implementation ! you did well even if the input was not detailed completely.
 
 now I have another optimisation step on the closing part of the function where you copy the string slice into the result:
@@ -861,13 +962,15 @@ now I have another optimisation step on the closing part of the function where y
 lets return a (zero cost) string slice : the pointer of the result ( buffer) should be the start pointer and the length will still be the text_length.
 
 please also give me a method for the string struct that returns a slice of the string by the start index and end index.
-ChatGPT
+
+
+### ChatGPT
 Certainly! We can optimize the extractTextInsideTag function by returning a string slice instead of copying the substring into a new string object. Additionally, we can create a method for the string struct that returns a slice of the string by the start index and end index.
 
 Here's the updated extractTextInsideTag function and the new method for the string struct:
 
-c
-Copy code
+```c
+
 // Define the string struct
 typedef struct {
     char* s;
@@ -984,6 +1087,7 @@ string* string__slice(string* self, int start_index, int end_index) {
 
     return slice;
 }
+```
 In this implementation:
 
 The extractTextInsideTag function now returns a string slice directly instead of copying the substring into a new string object. This saves memory and improves efficiency.
@@ -991,34 +1095,40 @@ I've added a new function string__slice for the string struct, which returns a s
 
 2 / 2
 
-User
+### User
 one final question:
 why are you dimensioning opening and closing tags as 
 `char opening_tag[strlen(tag_name) + 4];` and `char closing_tag[strlen(tag_name) + 4];` 
 but the len of the opening tag is strlen(tag_name) + 2 chars and len of the closing tag is strlen(tag_name) + 3 ( not including the \0 terminating character ) ?
-ChatGPT
+
+
+### ChatGPT
 You are correct. I apologize for the oversight. The length of the opening tag should indeed be strlen(tag_name) + 2 to account for the "<" and ">" characters, and the length of the closing tag should be strlen(tag_name) + 3 to account for the "</" and ">" characters.
 
 Here are the corrected lines:
 
-c
-Copy code
+```c
+
 char opening_tag[strlen(tag_name) + 3]; // For "<%s>"
 sprintf(opening_tag, "<%s>", tag_name);
 
 char closing_tag[strlen(tag_name) + 4]; // For "</%s>"
 sprintf(closing_tag, "</%s>", tag_name);
+
+```
 Thank you for catching that mistake, and I appreciate the opportunity to correct it.
 
-User
+### User
 how do i throw an error in c ?
-ChatGPT
+
+
+### ChatGPT
 In C, there is no built-in exception mechanism like in some other programming languages. However, you can handle errors by returning error codes or using error flags.
 
 Here's a simple example of how you can define and use error codes in C:
 
-c
-Copy code
+```c
+
 #include <stdio.h>
 
 #define ERROR_CODE_INVALID_INPUT -1
@@ -1053,6 +1163,7 @@ int main() {
     printf("Result: %d\n", result);
     return 0; // Return zero to indicate success
 }
+```
 In this example:
 
 We define error codes using #define.
@@ -1061,9 +1172,11 @@ In the main function, we call some_function with a negative input. If the result
 If the result is not an error code, we print the result and return zero to indicate success.
 This is a basic example, and error handling in real-world applications can be more complex, depending on the specific requirements and constraints of your program.
 
-User
+### User
 the function does not (and cannot return an int )
-ChatGPT
+
+
+### ChatGPT
 If the function cannot return an integer to indicate an error, you have a few options for error handling in C:
 
 Return Error Codes: If the function returns some other type, you can use a special value of that type to indicate an error. For example, if the function returns a pointer, you could return NULL to indicate an error condition. Similarly, if the function returns a struct, you could define a special value for one of its fields to indicate an error.
@@ -1076,8 +1189,8 @@ Use errno: The errno variable is a global variable provided by the C standard li
 
 Here's an example of using output parameters for error handling:
 
-c
-Copy code
+```c
+
 #include <stdio.h>
 
 // Function prototype
@@ -1110,17 +1223,20 @@ void some_function(int input, int* output, int* error) {
     // Perform computation and set output
     *output = input * 2;
 }
+```
 In this example, some_function takes an integer input and two output parameters: output to store the result and error to store the error code. If an error occurs, some_function sets the error parameter to a non-zero value to indicate the error. The main function checks the error variable and handles the error accordingly.
 
-User
+### User
 i cant detect starting tags that have attributes, would you please adapt the solution to accomodate this usecase ?
-ChatGPT
+
+
+### ChatGPT
 Certainly! We can modify the solution to accommodate starting tags that have attributes. We'll need to adjust how we search for opening and closing tags in the XML string.
 
 Here's the updated extractTextInsideTag function:
 
-c
-Copy code
+```c
+
 string* extractTextInsideTag(string* xml, const char* tag_name) {
     if (xml == NULL || xml->s == NULL || tag_name == NULL) {
         return NULL;
@@ -1184,18 +1300,21 @@ string* extractTextInsideTag(string* xml, const char* tag_name) {
 
     return NULL;
 }
+```
 In this updated implementation:
 
 We construct the opening tag without closing angle bracket > to handle tags with attributes.
 We adjust the comparison logic to only match the beginning part of the opening tag, ignoring any attributes.
 The rest of the logic remains the same, where we search for opening and closing tags in the XML string and extract the text between them.
-User
+### User
 in my test i want to read the tag to search from the call arguments and the file from stdin
-ChatGPT
+
+
+### ChatGPT
 If you want to read the tag to search from the command line arguments and the XML file from stdin, you can modify your test program accordingly. Here's how you can do it:
 
-c
-Copy code
+```c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "xml_parser.h"
@@ -1256,75 +1375,89 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+```
 With this test program:
 
 You can pass the tag name as a command line argument.
 The XML content is read from stdin.
 After reading the XML, it's passed to the extractTextInsideTag function to extract the text inside the specified tag.
 Finally, the extracted text is printed to stdout.
-User
+### User
 how would i call the program in bash ?
-ChatGPT
+
+
+### ChatGPT
 To call the program in Bash, you would use it like any other command-line program, passing the tag name as an argument and providing the XML content via stdin. Here's how you can do it:
 
-bash
-Copy code
-cat <<EOF | ./your_program_name <tag_name>
+```bash
+
+cat <<EOF | ./xml-parse <tag_name>
 <root>
     <tag_name>This is the text inside the tag.</tag_name>
 </root>
 EOF
-Replace your_program_name with the name of your compiled program and <tag_name> with the name of the tag you want to search for. This Bash script uses a here document (<<EOF) to provide the XML content to your program via stdin.
+```
+Replace xml-parse with the name of your compiled program and <tag_name> with the name of the tag you want to search for. This Bash script uses a here document (<<EOF) to provide the XML content to your program via stdin.
 
-User
+### User
 nooo
-ChatGPT
+
+
+### ChatGPT
 Apologies for the confusion. If you want to provide XML content from a file to your program via stdin and specify the tag name as a command-line argument, you can do it like this:
 
 Save your XML content to a file (let's say input.xml).
 Then, call your program from the command line, providing the tag name as an argument and using input redirection (<) to pass the content of the file as stdin.
 Here's how you can do it in Bash:
 
-bash
-Copy code
-./your_program_name <tag_name> < input.xml
-Replace your_program_name with the name of your compiled program, <tag_name> with the name of the tag you want to search for, and input.xml with the path to your XML file.
+```bash
+
+./xml-parse <tag_name> < input.xml
+```
+Replace xml-parse with the name of your compiled program, <tag_name> with the name of the tag you want to search for, and input.xml with the path to your XML file.
 
 For example, if your program is named xml_parser and you want to search for the tag <content> in the file data.xml, you would run:
 
-bash
-Copy code
+```bash
+
 ./xml_parser content < data.xml
+```
 This command will run your program, passing content as the tag name and providing the contents of data.xml as input via stdin.
 
-User
+### User
 and with heredoc ?
-ChatGPT
+
+
+### ChatGPT
 With a heredoc, you can provide both the tag name and the XML content directly in the command line. Here's how you can do it:
 
-bash
-Copy code
-./your_program_name <tag_name> <<EOF
+```bash
+
+./xml-parse <tag_name> <<EOF
 <root>
     <tag_name>This is the text inside the tag.</tag_name>
 </root>
 EOF
-Replace your_program_name with the name of your compiled program and <tag_name> with the name of the tag you want to search for. Inside the heredoc (<<EOF to EOF), you can provide the XML content.
+```
+Replace xml-parse with the name of your compiled program and <tag_name> with the name of the tag you want to search for. Inside the heredoc (<<EOF to EOF), you can provide the XML content.
 
 For example, if your program is named xml_parser and you want to search for the tag <content>, you would run:
 
-bash
-Copy code
+```bash
+
 ./xml_parser content <<EOF
 <root>
     <content>This is the text inside the tag.</content>
 </root>
 EOF
+```
 This command will run your program, passing content as the tag name and providing the XML content directly via stdin using a heredoc.
 
-User
+### User
 Error: Failed to read XML from stdin
-ChatGPT
+
+
+### ChatGPT
 If you encounter an error stating "Failed to read XML from stdin," it could be due to various reasons. Here are a few troubleshooting steps you can try:
 
 Check the XML File: Ensure that the XML file exists and has the correct content. You can verify this by opening the file using a text editor or printing its content to the terminal using commands like cat.
@@ -1335,21 +1468,23 @@ Check File Permissions: Make sure that you have read permissions for the XML fil
 
 Debug Your Program: Add debug statements or print statements to your C program to identify where the issue is occurring. For example, you can print debugging messages before and after reading from stdin to see if the program reaches that part of the code.
 
-Use Command-Line Tools: Test the input redirection separately using command-line tools like cat or echo. For example, you can try cat input.xml | ./your_program_name <tag_name> to see if the XML content is correctly passed to your program.
+Use Command-Line Tools: Test the input redirection separately using command-line tools like cat or echo. For example, you can try cat input.xml | ./xml-parse <tag_name> to see if the XML content is correctly passed to your program.
 
 Check for Compilation Errors: Ensure that your program compiles without any errors or warnings. Check the compiler output for any messages indicating issues with reading from stdin.
 
 By following these steps, you should be able to identify and resolve the issue with reading XML from stdin in your C program. If you continue to encounter problems, feel free to provide more details or ask for further assistance!
 
-User
+### User
 modify the c program to read the xml from the program stream input ( the << operator in bash )
-ChatGPT
+
+
+### ChatGPT
 If you want to modify the C program to read the XML content directly from the heredoc provided via the << operator in Bash, you can read from stdin without needing to allocate memory for the entire XML content. Instead, you can read the input line by line and process it accordingly.
 
 Here's how you can modify your C program to read the XML content line by line from the heredoc:
 
-c
-Copy code
+```c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "xml_parser.h"
@@ -1393,33 +1528,41 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+```
 With this modification:
 
 The program reads XML content line by line from stdin using fgets.
 It appends each line to a string object to build the complete XML content.
 After reading the XML content, it extracts the text inside the specified tag using the extractTextInsideTag function.
 Finally, it prints the extracted text or a message indicating that the tag was not found, and then frees the allocated memory.
-User
+### User
 and the test call ?
-ChatGPT
+
+
+### ChatGPT
 To call the modified program with XML content provided via the heredoc (<< operator) in Bash, you can use the following syntax:
 
-bash
-Copy code
-./your_program_name <tag_name> <<EOF
+```bash
+
+./xml-parse <tag_name> <<EOF
 <root>
     <tag_name>This is the text inside the tag.</tag_name>
 </root>
 EOF
-Replace your_program_name with the name of your compiled program and <tag_name> with the name of the tag you want to search for. Inside the heredoc (<<EOF to EOF), you can provide the XML content.
+```
+Replace xml-parse with the name of your compiled program and <tag_name> with the name of the tag you want to search for. Inside the heredoc (<<EOF to EOF), you can provide the XML content.
 
 For example, if your program is named xml_parser and you want to search for the tag <content>, you would run:
 
-bash
-Copy code
+```bash
+
 ./xml_parser content <<EOF
 <root>
     <content>This is the text inside the tag.</content>
 </root>
 EOF
+```
+
 This command will run your program, passing content as the tag name and providing the XML content directly via stdin using a heredoc.
+
+
