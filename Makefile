@@ -1,7 +1,8 @@
 CC := gcc
 CFLAGS := -Wall -Wextra -Iinclude
 LDFLAGS := -Llib
-LIBS := -lxml_parser -lstrings
+### LIBS := -lxml_parser -lstrings
+LIBS :=
 
 SRCDIR := src
 OBJDIR := obj

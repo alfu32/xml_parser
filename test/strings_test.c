@@ -33,7 +33,7 @@ static int test__strings() {
     string* str4 = string__alloc("Hello");
     const char* appendStr = ", World!";
     if (str4 != NULL) {
-        if (string__append(str4, appendStr) == 0) {
+        if (string__append(str4, appendStr,8) == 0) {
             printf("str4 after append: %s\n", str4->buffer);
         } else {
             printf("Append failed.\n");
