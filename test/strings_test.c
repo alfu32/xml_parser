@@ -1,7 +1,10 @@
+#ifndef _strings_test_c
+#define _strings_test_c
+
 #include <stdio.h>
 #include "../include/strings.h"
 
-int test__strings() {
+static int test__strings() {
     // Test string__alloc
     string* str1 = string__alloc("Hello");
     if (str1 != NULL) {
@@ -61,3 +64,4 @@ int test__strings() {
 
     return 0;
 }
+#endif

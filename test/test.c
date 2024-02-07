@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "strings.test.c"
-#include "xml_parser.test.c"
+#include "strings_test.c"
+#include "xml_parser_test.c"
 
 int main() {
     test__strings();

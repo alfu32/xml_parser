@@ -3,7 +3,7 @@
 #include "../include/strings.h"
 
 // Function to extract text inside a tag using the string struct
-string* extractTextInsideTag(string* xml, const char* tag);
+int extractTextInsideTag(string* xml, const char* tag_name,string* result);
 
 
 #endif

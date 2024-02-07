@@ -1,7 +1,7 @@
 CC := gcc
 CFLAGS := -Wall -Wextra -Iinclude
 LDFLAGS := -Llib
-LIBS :=
+LIBS := -lxml_parser -lstrings
 
 SRCDIR := src
 OBJDIR := obj
@@ -29,8 +29,13 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 $(OBJDIR)/%.o: $(TESTDIR)/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-test: $(TEST_OBJECTS)
-	$(CC) $(CFLAGS) -o $(TEST_TARGET) $^ $(LDFLAGS) $(LIBS)
+$(BINDIR):
+	mkdir -p $(BINDIR)
+
+$(TEST_TARGET): $(BINDIR) $(TEST_OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(TEST_OBJECTS) $(LDFLAGS) $(LIBS)
+
+test: $(TEST_TARGET)
 
 .PHONY: clean install uninstall
 
