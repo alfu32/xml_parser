@@ -1,5 +1,8 @@
 #ifndef _XML_PARSER_H
 #define _XML_PARSER_H
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 #include "../include/strings.h"
 
 // Function to extract text inside a tag using the string struct

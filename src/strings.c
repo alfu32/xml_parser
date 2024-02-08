@@ -1,10 +1,70 @@
 #ifndef _STRINGS_C
 #define _STRINGS_C
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "../include/strings.h"
 
+const char* string_util__trim_indent(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    // Find the smallest number of spaces at the beginning of each line
+    int min_spaces = -1;
+    const char* ptr = str;
+    while (*ptr != '\0') {
+        // Count the number of spaces at the beginning of the current line
+        int num_spaces = 0;
+        while (*ptr == ' ' || *ptr == '\t') {
+            num_spaces++;
+            ptr++;
+        }
+
+        // Update min_spaces if necessary
+        if ((min_spaces == -1 || num_spaces < min_spaces) && *(ptr) != '\0' && *(ptr) != '\n') {
+            min_spaces = num_spaces;
+        }
+
+        // Move to the next line
+        while (*ptr != '\0' && *ptr != '\n') {
+            ptr++;
+        }
+
+        // Skip the newline character
+        if (*ptr == '\n') {
+            ptr++;
+        }
+    }
+    // printf("min spaces for \n %s \n is %d\n",str,min_spaces);
+    // Allocate memory for the trimmed string
+    char* trimmed_str = (char*)malloc(strlen(str) + 1);
+    if (trimmed_str == NULL) {
+        return NULL;
+    }
+    char* trimmed_ptr = trimmed_str;
+
+    // Trim the same number of spaces from the beginning of each line
+    ptr = str;
+    while (*ptr != '\0') {
+        // Copy characters to trimmed string
+        *trimmed_ptr = *ptr;
+        // putchar(*ptr);
+
+        if (*ptr == '\n') {
+            int k=0;
+            while((*ptr == '\n' || *ptr == ' ' || *ptr == '\t') && k<min_spaces){
+                ptr++;
+                k++;
+                
+            }
+        }
+        ptr++;
+        trimmed_ptr++;
+    }
+
+    // Null-terminate the trimmed string
+    *trimmed_ptr = '\0';
+
+    return trimmed_str;
+}
 
 // Function to allocate a string with an initial value
 string* string__alloc(const char* init_val) {
@@ -34,7 +94,7 @@ int string__free(string* self) {
 }
 
 // Function to find a substring in a string and return its position
-int string_strstr(string* self, const char* find_str) {
+int string__index_of(string* self, const char* find_str) {
     if (self == NULL || self->buffer == NULL || find_str == NULL) {
         return -1;
     }
@@ -146,6 +206,7 @@ int string__find_tagged_substrings(string* xml, const char* opening_tag, const c
                         //printf("stored end index %d for the last occurence of %s in %s\n",index + closing_tag_size,closing_tag,ptr);
                         int text_length = ptr + closing_tag_size - start;
                         string__append(result,start,text_length);
+                        string__add(result,"\n");
                         start=NULL;
                     }
                 }

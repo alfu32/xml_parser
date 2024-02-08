@@ -1,8 +1,5 @@
 #ifndef _XML_PARSER_C
 #define _XML_PARSER_C
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include "../include/strings.h"
 #include "../include/xml_parser.h"
 

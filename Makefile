@@ -1,13 +1,15 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -Iinclude
+CFLAGS := -Wall -Wextra -Iinclude -Itest_headers
 LDFLAGS := -Llib
 ### LIBS := -lxml_parser -lstrings
 LIBS :=
 
 SRCDIR := src
+LIBDIR := lib
 OBJDIR := obj
 BINDIR := bin
 TESTDIR := test
+TESTHEAD := test
 
 SOURCES := $(wildcard $(SRCDIR)/*.c)
 OBJECTS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SOURCES))

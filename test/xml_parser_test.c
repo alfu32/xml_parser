@@ -1,15 +1,10 @@
 
-#ifndef _xml_parser_test_c
-#define _xml_parser_test_c
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include "../include/strings.h"
-#include "../include/xml_parser.h"
+#ifndef _XML_PARSER_TEST_C
+#define _XML_PARSER_TEST_C 1
+#include "../test_headers/xml_parser_test.h"
 
 
-static int test__xml_parser() {
+int test__xml_parser() {
     const char* xml = "<root><name>John</name><age>30</age><com><com id=\"1\">john</com><com id=\"2\">yes</com><com id=\"3\">HDYD?</com></com></root>";
     const char* tag = "name";
     const char* comments = "com";
