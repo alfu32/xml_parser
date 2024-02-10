@@ -146,26 +146,26 @@ int xml_parser__get_inner_xml(string* xml,string* result){
     while(*ptr !='\0') {
         if(status == STATUS_START && *ptr == '<'){
             status=STATUS_START_OPENING_TAG;
-            printf("%c @ %d status changed from STATUS_START to STATUS_START_OPENING_TAG\n",*ptr,index_start);
+            //// printf("%c @ %d status changed from STATUS_START to STATUS_START_OPENING_TAG\n",*ptr,index_start);
         }
         if((status==STATUS_START_OPENING_TAG || status==STATUS_END_QUOTES) && *ptr == '"') {
             status=STATUS_START_QUOTES;
-            printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_START_QUOTES\n",*ptr,index_start);
+            //// printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_START_QUOTES\n",*ptr,index_start);
         }
         if(status == STATUS_START_QUOTES && *ptr == '"') {
             status=STATUS_END_QUOTES;
-            printf("%c @ %d status changed from STATUS_START_QUOTES to STATUS_END_QUOTES\n",*ptr,index_start);
+            //// printf("%c @ %d status changed from STATUS_START_QUOTES to STATUS_END_QUOTES\n",*ptr,index_start);
         }
         if((status==STATUS_START_OPENING_TAG || status==STATUS_END_QUOTES) && *ptr == '>') {
             status=STATUS_END_OPENING_TAG;
-            printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_END_OPENING_TAG\n",*ptr,index_start);
+            //// printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_END_OPENING_TAG\n",*ptr,index_start);
             start=ptr;
             index_start=index+1;
             start++;
         }
         if(status == STATUS_END_OPENING_TAG && *ptr == '<' && *(ptr+1) == '/'){
             status=STATUS_START_END_TAG;
-            printf("%c @ %d status changed from STATUS_END_OPENING_TAG to STATUS_START_END_TAG\n",*ptr,index_start);
+            //// printf("%c @ %d status changed from STATUS_END_OPENING_TAG to STATUS_START_END_TAG\n",*ptr,index_start);
             end=ptr;
             index_end = index;
             ptr++;
@@ -173,7 +173,7 @@ int xml_parser__get_inner_xml(string* xml,string* result){
         }
         if( status==STATUS_START_END_TAG && *ptr == '>') {
             status=STATUS_END_END_TAG;
-            printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_END_OPENING_TAG\n",*ptr,index_start);
+            //// printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_END_OPENING_TAG\n",*ptr,index_start);
             // start=ptr;
             // start++;
             // TODO find multiples

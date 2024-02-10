@@ -1,0 +1,1 @@
+tcc -Wall -Wextra -Iinclude -Itest_headers src/*.c test/*.c main_test.c -o test.exe
