@@ -81,6 +81,9 @@ string* string__alloc(const char* init_val) {
     }
     return new_str;
 }
+string* string__copy(string* init_val){
+    return string__alloc(init_val->buffer);
+}
 
 // Function to free a string
 int string__free(string* self) {
@@ -180,41 +183,30 @@ int string__find_tagged_substrings(string* xml, const char* opening_tag, const c
     size_t found_count=0;
     // Iterate through the XML string
     char* ptr = xml->buffer;
-    //printf("=== start %s>..%s",opening_tag,closing_tag);
     while (*ptr != '\0') {
-        if (*ptr == '<') {//
-            //printf("found start char < @ index %d in %s\n",index,ptr);
-            // Check for opening tag
-            if (strncmp(ptr, opening_tag, opening_tag_size) == 0) {
-                //printf("next %d chars match opening tag %s in %s\n",opening_tag_size,opening_tag,ptr);
+        if (*ptr == opening_tag[0] && strncmp(ptr, opening_tag, opening_tag_size) == 0) {
                 // Increment the opening tags count
-                opening_tags_count++;
-                if (opening_tags_count == 1) {
-                    // Save the start pointer
+                if (opening_tags_count == 0) {
                     start = ptr;
-                    //printf("stored start index %d for the first occurence of %s in %s\n",index,opening_tag,ptr);
                 }
+                opening_tags_count++;
+                ptr+=opening_tag_size-1;
+        }
+        if (*ptr == closing_tag[0] && strncmp(ptr, closing_tag, closing_tag_size) == 0 && opening_tags_count > 0) {
+            // Decrement the opening tags count
+            if (opening_tags_count == 1 && start != NULL) {
+                // Exit the loop if both start and end pointers are set
+                int text_length = ptr + closing_tag_size - start;
+                string__append(result,start,text_length);
+                string__add(result,"");
+                start=NULL;
+                found_count++;
             }
-            // Check for closing tag
-            else if (strncmp(ptr, closing_tag, closing_tag_size) == 0) {
-                //printf("next %d chars match closing tag %s in %s\n",closing_tag_size,closing_tag,ptr);
-                if (opening_tags_count > 0) {
-                    // Decrement the opening tags count
-                    opening_tags_count--;
-                    if (opening_tags_count == 0 && start != NULL) {
-                        // Exit the loop if both start and end pointers are set
-                        //printf("stored end index %d for the last occurence of %s in %s\n",index + closing_tag_size,closing_tag,ptr);
-                        int text_length = ptr + closing_tag_size - start;
-                        string__append(result,start,text_length);
-                        string__add(result,"\n");
-                        start=NULL;
-                    }
-                }
-            }
+            opening_tags_count--;
+            ptr+=closing_tag_size-1;
         }
         // Move to the next character
         ptr++;
-        found_count++;
     }
     return found_count;
 }

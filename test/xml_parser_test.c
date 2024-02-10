@@ -3,67 +3,111 @@
 #define _XML_PARSER_TEST_C 1
 #include "../test_headers/xml_parser_test.h"
 
+int test__find_by_tag(string* xml_str,const char* tag) {
+    int error;
+    
+    string* result=string__alloc("");
+    error = xml_parser__find_elements_by_tag_text(xml_str, tag, result);
+
+    if (error < 0) {
+        printf("Tag <%s> not found or error occurred. [%d]\n", tag,error);
+    } else {
+        printf("Found %d occurences of <%s></%s> :  [%s]\n", error,tag,tag, result->buffer);
+        string__free(result);
+    }
+    return error;
+}
+
+int test__get_node_value(string* xml_str,const char* tag) {
+    int count;
+    
+    string* result=string__alloc("");
+    count = xml_parser__find_elements_by_tag_text(xml_str, tag, result);
+
+    if (count < 0) {
+        printf("Tag <%s> not found or error occurred. [%d]\n", tag,count);
+        return count;
+    } else {
+        printf("Found %d occurences of <%s></%s> :  [%s]\n", count,tag,tag, result->buffer);
+
+        string* inner_xml=string__alloc("");
+        int error = xml_parser__get_node_value(result, inner_xml);
+
+        if (error < 0) {
+            printf("Error %d seeking inner xml in [%s]\n", error,result->buffer);
+        } else {
+            printf("Found inner xml [%s] in  [%s]\n", inner_xml->buffer, result->buffer);
+            string__free(inner_xml);
+        }
+
+        string__free(result);
+        return error;
+    }
+}
+
+int test__get_inner_xml(string* xml_str,const char* tag) {
+    int count;
+    
+    string* result=string__alloc("");
+    count = xml_parser__find_elements_by_tag_text(xml_str, tag, result);
+
+    if (count < 0) {
+        printf("Tag <%s> not found or error occurred. [%d]\n", tag,count);
+        return count;
+    } else {
+        printf("Found %d occurences of <%s></%s> :  [%s]\n", count,tag,tag, result->buffer);
+
+        string* inner_xml=string__alloc("");
+        int error = xml_parser__get_inner_xml(result, inner_xml);
+
+        if (error < 0) {
+            printf("Error %d seeking inner xml in [%s]\n", error,result->buffer);
+        } else {
+            printf("Found inner xml [%s] in  [%s]\n", inner_xml->buffer, result->buffer);
+            string__free(inner_xml);
+        }
+
+        string__free(result);
+        return error;
+    }
+}
 
 int test__xml_parser() {
     const char* xml = "<root><name>John</name><age>30</age><com><com id=\"1\">john</com><com id=\"2\">yes</com><com id=\"3\">HDYD?</com></com></root>";
-    const char* tag = "name";
-    const char* comments = "com";
-    const char* comment = "com id=\"";
 
     // Create a string object from the XML
     string* xml_str = string__alloc(xml);
 
-    // Extract the text inside the tag using the string struct
-    string* result;
-    int error;
+    test__find_by_tag(xml_str,"name");
+
+    test__find_by_tag(xml_str,"com");
+
+    test__find_by_tag(xml_str,"com id=\"");
+
+    test__find_by_tag(xml_str,"com id=\"1\"");
+
+    test__get_node_value(xml_str,"name");
+
+    test__get_node_value(xml_str,"com");
+
+    test__get_node_value(xml_str,"com id=\"");
+
+    test__get_node_value(xml_str,"com id=\"1\"");
+
+    test__get_inner_xml(xml_str,"name");
+
+    test__get_inner_xml(xml_str,"com");
+
+    test__get_inner_xml(xml_str,"com id=\"");
+
+    test__get_inner_xml(xml_str,"com id=\"1\"");
     
-    result=string__alloc("");
-    error = xml_parser__outer_xml(xml_str, tag, result);
-
-    if (error == 0) {
-        printf("Text inside <%s:> %s\n", tag, result->buffer);
-        string__free(result);
-    } else {
-        printf("Tag %s not found or error occurred. [%d]\n", tag,error);
-    }
-
-    result=string__alloc("");
-    error = xml_parser__outer_xml(xml_str, comments, result);
-
-    if (error == 0) {
-        printf("Text inside <%s>: %s\n", comments, result->buffer);
-        string__free(result);
-    } else {
-        printf("Tag %s not found or error occurred. [%d]\n", tag,error);
-        
-    } 
-
-    result=string__alloc("");
-    error = xml_parser__outer_xml(xml_str, comment, result);
-
-    if (error == 0) {
-        printf("Text inside <%s>: %s\n", comment, result->buffer);
-        string__free(result);
-    } else {
-        printf("Tag %s not found or error occurred. [%d]\n", tag,error);
-    }
-    //// result=string__alloc("");
-    //// string_slice* next = string__get_slice(xml_str,last_index,strlen(xml_str));
-    //// 
-    //// last_index = xml_parser__outer_xml((string*)next, comments, result);
-    //// 
-    //// if (last_index >= 0) {
-    ////     printf("Text matching %s: %s\n", tag, result->buffer);
-    ////     string__free(next);
-    ////     string__free(result);
-    //// } else {
-    ////     printf("Tag %s not found or error occurred. [%d]\n", tag,last_index);
-    ////     
-    //// }
+    
 
     // Free the xml_str
     string__free(xml_str);
 
     return 0;
 }
+
 #endif

@@ -3,8 +3,15 @@
 #include "../include/strings.h"
 #include "../include/xml_parser.h"
 
+const char * XML_PARSER_ERR[] = {
+    "operator succesfull",
+    "xml_parser member function was called on a null object",
+    "xml_parser__find_elements_by_tag_text called with an undefined ( void ) tag",
+    "xml_parser member function was called with an uninitialised string* result"
+};
+
 // Function to extract text inside a tag using the string struct
-int xml_parser__outer_xml(string* xml, const char* tag_name,string* result) {
+int xml_parser__find_elements_by_tag_text(string* xml, const char* tag_name,string* result) {
     if (xml == NULL || xml->buffer == NULL ) {
         return -1;
     }
@@ -25,9 +32,8 @@ int xml_parser__outer_xml(string* xml, const char* tag_name,string* result) {
     char tag[index_tag];
     strncpy(tag,tag_name,index_tag);
     tag[index_tag]='\0';
-    int opening_tags_count = 0;
-    char* start = NULL;
-    char* end = NULL;
+    // int opening_tags_count = 0;
+    // char* start = NULL;
 
     // Construct opening and closing tags
     char opening_tag[tag_size + 2]; // For "<%s>"
@@ -36,59 +42,152 @@ int xml_parser__outer_xml(string* xml, const char* tag_name,string* result) {
     char closing_tag[tag_size + 4]; // For "</%s>"
     sprintf(closing_tag, "</%s>", tag);
 
-    size_t opening_tag_size = strlen(opening_tag);
-    size_t closing_tag_size = strlen(closing_tag);
+    /// size_t opening_tag_size = strlen(opening_tag);
+    /// size_t closing_tag_size = strlen(closing_tag);
 
-    size_t index=0;
-    // Iterate through the XML string
-    char* ptr = xml->buffer;
-    //printf("=== start %s>..%s",opening_tag,closing_tag);
-    while (*ptr != '\0') {
-        if (*ptr == '<') {//
-            //printf("found start char < @ index %d in %s\n",index,ptr);
-            // Check for opening tag
-            if (strncmp(ptr, opening_tag, opening_tag_size) == 0) {
-                //printf("next %d chars match opening tag %s in %s\n",opening_tag_size,opening_tag,ptr);
-                // Increment the opening tags count
-                opening_tags_count++;
-                if (opening_tags_count == 1) {
-                    // Save the start pointer
-                    start = ptr;
-                    //printf("stored start index %d for the first occurence of %s in %s\n",index,opening_tag,ptr);
-                }
-            }
-            // Check for closing tag
-            else if (strncmp(ptr, closing_tag, closing_tag_size) == 0) {
-                //printf("next %d chars match closing tag %s in %s\n",closing_tag_size,closing_tag,ptr);
-                if (opening_tags_count > 0) {
-                    // Decrement the opening tags count
-                    opening_tags_count--;
-                    if (opening_tags_count == 0 && start != NULL) {
-                        // Save the end pointer
-                        end = ptr + closing_tag_size;
-                        // Exit the loop if both start and end pointers are set
-                        //printf("stored end index %d for the last occurence of %s in %s\n",index + closing_tag_size,closing_tag,ptr);
-                        break;
-                    }
-                }
-            }
-        }
-        // Move to the next character
-        ptr++;
-        index++;
+    int opening_tags_count = string__find_tagged_substrings(xml, opening_tag, closing_tag, result);
+
+    return opening_tags_count;
+}
+#define STATUS_START 0
+#define STATUS_START_OPENING_TAG 1
+#define STATUS_START_QUOTES 2
+#define STATUS_END_QUOTES 3
+#define STATUS_END_OPENING_TAG 4
+#define STATUS_END 5
+#define STATUS_END_END_TAG 6
+#define STATUS_START_END_TAG 7
+int xml_parser__get_node_value(string* xml,string* result){
+    if (xml == NULL || xml->buffer == NULL ) {
+        return -1;
     }
-    // If both start and end pointers are set, return the string slice
-    if (start != NULL && end != NULL) {
-        // Calculate the length of the text inside the tags
-        int text_length = end - start;
-        string__append(result,start,text_length);
-        return 0;
-    } else {
+    if(result == NULL) {
+        return -3;
+    }
+    char* ptr=xml->buffer;
+    char* start=NULL;
+    
+    int index_start=0;
+    
+    int status=STATUS_START;
+
+    while(*ptr !='\0') {
+        if(status == STATUS_START && *ptr == '<'){
+            status=STATUS_START_OPENING_TAG;
+            /// printf("%c @ %d status changed from STATUS_START to STATUS_START_OPENING_TAG\n",*ptr,index_start);
+        }
+        if((status==STATUS_START_OPENING_TAG || status==STATUS_END_QUOTES) && *ptr == '"') {
+            status=STATUS_START_QUOTES;
+            /// printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_START_QUOTES\n",*ptr,index_start);
+        }
+        if(status == STATUS_START_QUOTES && *ptr == '"') {
+            status=STATUS_END_QUOTES;
+            /// printf("%c @ %d status changed from STATUS_START_QUOTES to STATUS_END_QUOTES\n",*ptr,index_start);
+        }
+        if((status==STATUS_START_OPENING_TAG || status==STATUS_END_QUOTES) && *ptr == '>') {
+            status=STATUS_END_OPENING_TAG;
+            /// printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_END_OPENING_TAG\n",*ptr,index_start);
+            start=ptr;
+            start++;
+            index_start++;
+            break;
+        }
+        ptr++;
+        index_start++;
+    }
+    int index_end=xml->len - 1;
+    char* end=NULL;
+    ptr=xml->buffer;
+    status = STATUS_END;
+    /// printf("start looking up end tag %d \n",index_end);
+    if( start == NULL ){
         return -4;
+    } else {
+        while(index_end != 0){
+
+            if(status == STATUS_END && ptr[index_end] == '>'){
+                status=STATUS_END_END_TAG;
+                /// printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_END_OPENING_TAG\n",ptr[index_end],index_end);
+            }
+            if(status == STATUS_END_END_TAG && ptr[index_end] == '/' && ptr[index_end-1] == '<'){
+                status=STATUS_START_END_TAG;
+                /// printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_END_OPENING_TAG\n",ptr[index_end],index_end);
+                end=ptr-index_end-1;
+                index_end--;
+                break;
+            }
+            index_end--;
+        }
+        if(end == NULL){
+            return -5;
+        } else {
+            /// printf("substring %s starts at %d and ends at %d in %s \n",start,index_start,index_end,xml->buffer);
+            string__append(result,start,index_end-index_start);
+            return 0;
+        }
     }
 }
 
+int xml_parser__get_inner_xml(string* xml,string* result){
 
+    if (xml == NULL || xml->buffer == NULL ) {
+        return -1;
+    }
+    char* ptr=xml->buffer;
+    char* start=NULL;
+    char* end=NULL;
+    
+    int index_start=0;
+    int index_end=0;
+    int index=0;
+    
+    int status=STATUS_START;
 
+    while(*ptr !='\0') {
+        if(status == STATUS_START && *ptr == '<'){
+            status=STATUS_START_OPENING_TAG;
+            printf("%c @ %d status changed from STATUS_START to STATUS_START_OPENING_TAG\n",*ptr,index_start);
+        }
+        if((status==STATUS_START_OPENING_TAG || status==STATUS_END_QUOTES) && *ptr == '"') {
+            status=STATUS_START_QUOTES;
+            printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_START_QUOTES\n",*ptr,index_start);
+        }
+        if(status == STATUS_START_QUOTES && *ptr == '"') {
+            status=STATUS_END_QUOTES;
+            printf("%c @ %d status changed from STATUS_START_QUOTES to STATUS_END_QUOTES\n",*ptr,index_start);
+        }
+        if((status==STATUS_START_OPENING_TAG || status==STATUS_END_QUOTES) && *ptr == '>') {
+            status=STATUS_END_OPENING_TAG;
+            printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_END_OPENING_TAG\n",*ptr,index_start);
+            start=ptr;
+            index_start=index+1;
+            start++;
+        }
+        if(status == STATUS_END_OPENING_TAG && *ptr == '<' && *(ptr+1) == '/'){
+            status=STATUS_START_END_TAG;
+            printf("%c @ %d status changed from STATUS_END_OPENING_TAG to STATUS_START_END_TAG\n",*ptr,index_start);
+            end=ptr;
+            index_end = index;
+            ptr++;
+            index++;
+        }
+        if( status==STATUS_START_END_TAG && *ptr == '>') {
+            status=STATUS_END_END_TAG;
+            printf("%c @ %d status changed from STATUS_START_OPENING_TAG to STATUS_END_OPENING_TAG\n",*ptr,index_start);
+            // start=ptr;
+            // start++;
+            // TODO find multiples
+            break;
+        }
+        ptr++;
+        index++;
+    }
+    if( start == NULL || end == NULL ){
+        return -4;
+    } else {
+        string__append(result,start,index_end-index_start);
+        return 0;
+    }
+}
 
 #endif

@@ -105,7 +105,7 @@ int test__string__find_tagged_substrings(){
     if (str6 != NULL) {
         int count = string__find_tagged_substrings(str6,"<a>","</a>", str6result);
         if (count >= 0) {
-            printf("\x1b[32m%s\x1b[0m found in \x1b[34m%s\x1b[0m\n", str6result->buffer, str6->buffer);
+            printf("\x1b[32m[%s]\x1b[0m found in \x1b[34m%s\x1b[0m\n", str6result->buffer, str6->buffer);
             string__free(str6result);
             string__free(str6);
             return 0;

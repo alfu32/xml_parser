@@ -9,6 +9,9 @@
 #include "../include/xml_parser.h"
 
 
+int test__find_by_tag(string* xml_str,const char* tag);
+int test__get_node_value(string* xml_str,const char* tag);
+
 int test__xml_parser();
 
 #endif

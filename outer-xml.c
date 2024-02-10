@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     string* result;
     int error;
     result=string__alloc("");
-    error = xml_parser__outer_xml(xml_string, tag_name, result);
+    error = xml_parser__find_elements_by_tag_text(xml_string, tag_name, result);
 
     if (error == 0) {
         printf("%s\n",result->buffer);
