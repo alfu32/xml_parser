@@ -147,15 +147,15 @@ int string__append(string_t* self, const char* chars,size_t num_chars) {
     return 0;
 }
 
-string_slice* string__get_slice(string_t* self, int start, int end) {
-    string_slice* slice = (string_slice*)malloc(sizeof(string_slice));
+string_slice_t* string__get_slice(string_t* self, int start, int end) {
+    string_slice_t* slice = (string_slice_t*)malloc(sizeof(string_slice_t));
     slice->buffer = self->buffer + start;
     slice->len = end - start;
     slice->underlying_string=self;
     return slice;
 }
 
-int string_slice__free(string_slice* self){
+int string_slice__free(string_slice_t* self){
     free(self);
     return 0;
 }
