@@ -7,11 +7,11 @@
 #define INHERIT_STRING char* buffer;\
     size_t len;\
     
-typedef struct string_t string_t;
+typedef struct string_s string_t;
 typedef struct string_array string_array;
 typedef struct string_slice string_slice;
 // Define the string_t struct
-typedef struct string_t {
+typedef struct string_s {
     INHERIT_STRING
 } string_t;
 
