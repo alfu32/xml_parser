@@ -7,11 +7,11 @@ const char * XML_PARSER_ERR[] = {
     "operator succesfull",
     "xml_parser member function was called on a null object",
     "xml_parser__find_elements_by_tag_text called with an undefined ( void ) tag",
-    "xml_parser member function was called with an uninitialised string* result"
+    "xml_parser member function was called with an uninitialised string_t* result"
 };
 
-// Function to extract text inside a tag using the string struct
-int xml_parser__find_elements_by_tag_text(string* xml, const char* tag_name,string* result) {
+// Function to extract text inside a tag using the string_t struct
+int xml_parser__find_elements_by_tag_text(string_t* xml, const char* tag_name,string_t* result) {
     if (xml == NULL || xml->buffer == NULL ) {
         return -1;
     }
@@ -57,7 +57,7 @@ int xml_parser__find_elements_by_tag_text(string* xml, const char* tag_name,stri
 #define STATUS_END 5
 #define STATUS_END_END_TAG 6
 #define STATUS_START_END_TAG 7
-int xml_parser__get_node_value(string* xml,string* result){
+int xml_parser__get_node_value(string_t* xml,string_t* result){
     if (xml == NULL || xml->buffer == NULL ) {
         return -1;
     }
@@ -128,7 +128,7 @@ int xml_parser__get_node_value(string* xml,string* result){
     }
 }
 
-int xml_parser__get_inner_xml(string* xml,string* result){
+int xml_parser__get_inner_xml(string_t* xml,string_t* result){
 
     if (xml == NULL || xml->buffer == NULL ) {
         return -1;

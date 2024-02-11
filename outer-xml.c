@@ -18,18 +18,18 @@ int main(int argc, char *argv[]) {
 
     // Read XML content line by line from stdin
     char line[MAX_LINE_LENGTH];
-    string* xml_string = string__alloc("");
+    string_t* xml_string = string__alloc("");
     if (xml_string == NULL) {
-        fprintf(stderr, "Error: Failed to allocate memory for XML string\n");
+        fprintf(stderr, "Error: Failed to allocate memory for XML string_t\n");
         return 1;
     }
 
     while (fgets(line, MAX_LINE_LENGTH, stdin) != NULL) {
-        // Append the line to the XML string
+        // Append the line to the XML string_t
         string__add(xml_string, line);
     }
 
-    string* result;
+    string_t* result;
     int error;
     result=string__alloc("");
     error = xml_parser__find_elements_by_tag_text(xml_string, tag_name, result);

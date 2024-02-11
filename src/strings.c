@@ -34,7 +34,7 @@ const char* string_util__trim_indent(const char* str) {
         }
     }
     // printf("min spaces for \n %s \n is %d\n",str,min_spaces);
-    // Allocate memory for the trimmed string
+    // Allocate memory for the trimmed string_t
     char* trimmed_str = (char*)malloc(strlen(str) + 1);
     if (trimmed_str == NULL) {
         return NULL;
@@ -44,7 +44,7 @@ const char* string_util__trim_indent(const char* str) {
     // Trim the same number of spaces from the beginning of each line
     ptr = str;
     while (*ptr != '\0') {
-        // Copy characters to trimmed string
+        // Copy characters to trimmed string_t
         *trimmed_ptr = *ptr;
         // putchar(*ptr);
 
@@ -60,15 +60,15 @@ const char* string_util__trim_indent(const char* str) {
         trimmed_ptr++;
     }
 
-    // Null-terminate the trimmed string
+    // Null-terminate the trimmed string_t
     *trimmed_ptr = '\0';
 
     return trimmed_str;
 }
 
-// Function to allocate a string with an initial value
-string* string__alloc(const char* init_val) {
-    string* new_str = (string*)malloc(sizeof(string));
+// Function to allocate a string_t with an initial value
+string_t* string__alloc(const char* init_val) {
+    string_t* new_str = (string_t*)malloc(sizeof(string_t));
     if (new_str != NULL) {
         new_str->len = strlen(init_val);
         new_str->buffer = (char*)malloc(new_str->len + 1);
@@ -81,12 +81,12 @@ string* string__alloc(const char* init_val) {
     }
     return new_str;
 }
-string* string__copy(string* init_val){
+string_t* string__copy(string_t* init_val){
     return string__alloc(init_val->buffer);
 }
 
-// Function to free a string
-int string__free(string* self) {
+// Function to free a string_t
+int string__free(string_t* self) {
     if (self != NULL) {
         if (self->buffer != NULL) {
             free(self->buffer);
@@ -96,8 +96,8 @@ int string__free(string* self) {
     return 0;
 }
 
-// Function to find a substring in a string and return its position
-int string__index_of(string* self, const char* find_str) {
+// Function to find a substring in a string_t and return its position
+int string__index_of(string_t* self, const char* find_str) {
     if (self == NULL || self->buffer == NULL || find_str == NULL) {
         return -1;
     }
@@ -109,7 +109,7 @@ int string__index_of(string* self, const char* find_str) {
 }
 
 // Function to concatenate two strings
-int string__concat(string* self, string* other) {
+int string__concat(string_t* self, string_t* other) {
     if (self == NULL || other == NULL || self->buffer == NULL || other->buffer == NULL) {
         return -1;
     }
@@ -125,14 +125,14 @@ int string__concat(string* self, string* other) {
     return 0;
 }
 
-// Function to append a string to another string
-int string__add(string* self, const char* chars) {
+// Function to append a string_t to another string_t
+int string__add(string_t* self, const char* chars) {
     string__append(self,chars,strlen(chars));
     return 0;
 }
 
-// Function to append a string to another string
-int string__append(string* self, const char* chars,size_t num_chars) {
+// Function to append a string_t to another string_t
+int string__append(string_t* self, const char* chars,size_t num_chars) {
     if (self == NULL || self->buffer == NULL || chars == NULL) {
         return -1;
     }
@@ -147,7 +147,7 @@ int string__append(string* self, const char* chars,size_t num_chars) {
     return 0;
 }
 
-string_slice* string__get_slice(string* self, int start, int end) {
+string_slice* string__get_slice(string_t* self, int start, int end) {
     string_slice* slice = (string_slice*)malloc(sizeof(string_slice));
     slice->buffer = self->buffer + start;
     slice->len = end - start;
@@ -160,8 +160,8 @@ int string_slice__free(string_slice* self){
     return 0;
 }
 
-// Function to extract text inside a tag using the string struct
-int string__find_tagged_substrings(string* xml, const char* opening_tag, const char* closing_tag,string* result) {
+// Function to extract text inside a tag using the string_t struct
+int string__find_tagged_substrings(string_t* xml, const char* opening_tag, const char* closing_tag,string_t* result) {
     if (xml == NULL || xml->buffer == NULL ) {
         return -1;
     }
@@ -181,7 +181,7 @@ int string__find_tagged_substrings(string* xml, const char* opening_tag, const c
     size_t closing_tag_size = strlen(closing_tag);
 
     size_t found_count=0;
-    // Iterate through the XML string
+    // Iterate through the XML string_t
     char* ptr = xml->buffer;
     while (*ptr != '\0') {
         if (*ptr == opening_tag[0] && strncmp(ptr, opening_tag, opening_tag_size) == 0) {

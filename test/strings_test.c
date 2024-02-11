@@ -5,7 +5,7 @@
 int test__string__alloc(){
     
     // Test string__alloc
-    string* str1 = string__alloc("Hello");
+    string_t* str1 = string__alloc("Hello");
     if (str1 != NULL) {
         printf("str1: %s\n", str1->buffer);
         string__free(str1);
@@ -17,8 +17,8 @@ int test__string__alloc(){
 }
 int test__string__concat(){
     // Test string__concat
-    string* str2 = string__alloc("Hello");
-    string* str3 = string__alloc(", World!");
+    string_t* str2 = string__alloc("Hello");
+    string_t* str3 = string__alloc(", World!");
     if (str2 != NULL && str3 != NULL) {
         if (string__concat(str2, str3) == 0) {
             printf("str2 after concatenation: %s\n", str2->buffer);
@@ -36,7 +36,7 @@ int test__string__concat(){
 }
 int test__string__append(){
     // Test string__append
-    string* str4 = string__alloc("Hello");
+    string_t* str4 = string__alloc("Hello");
     const char* appendStr = ", World!";
     if (str4 != NULL) {
         if (string__append(str4, appendStr,8) == 0) {
@@ -55,7 +55,7 @@ int test__string__append(){
 int test__string__index_of(){
 
     // Test string__index_of
-    string* str5 = string__alloc("This is a test string");
+    string_t* str5 = string__alloc("This is a test string_t");
     const char* findStr = "test";
     if (str5 != NULL) {
         int pos = string__index_of(str5, findStr);
@@ -100,8 +100,8 @@ int test__string__find_tagged_substrings(){
             <a>hamster</a>\n\
         </a>\n\
     ");
-    string* str6 = string__alloc(trimmed_input);
-    string* str6result = string__alloc("");
+    string_t* str6 = string__alloc(trimmed_input);
+    string_t* str6result = string__alloc("");
     if (str6 != NULL) {
         int count = string__find_tagged_substrings(str6,"<a>","</a>", str6result);
         if (count >= 0) {

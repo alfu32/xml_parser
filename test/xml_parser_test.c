@@ -3,10 +3,10 @@
 #define _XML_PARSER_TEST_C 1
 #include "../test_headers/xml_parser_test.h"
 
-int test__find_by_tag(string* xml_str,const char* tag) {
+int test__find_by_tag(string_t* xml_str,const char* tag) {
     int error;
     
-    string* result=string__alloc("");
+    string_t* result=string__alloc("");
     error = xml_parser__find_elements_by_tag_text(xml_str, tag, result);
 
     if (error < 0) {
@@ -18,10 +18,10 @@ int test__find_by_tag(string* xml_str,const char* tag) {
     return error;
 }
 
-int test__get_node_value(string* xml_str,const char* tag) {
+int test__get_node_value(string_t* xml_str,const char* tag) {
     int count;
     
-    string* result=string__alloc("");
+    string_t* result=string__alloc("");
     count = xml_parser__find_elements_by_tag_text(xml_str, tag, result);
 
     if (count < 0) {
@@ -30,7 +30,7 @@ int test__get_node_value(string* xml_str,const char* tag) {
     } else {
         printf("Found %d occurences of <%s></%s> :  [%s]\n", count,tag,tag, result->buffer);
 
-        string* inner_xml=string__alloc("");
+        string_t* inner_xml=string__alloc("");
         int error = xml_parser__get_node_value(result, inner_xml);
 
         if (error < 0) {
@@ -45,10 +45,10 @@ int test__get_node_value(string* xml_str,const char* tag) {
     }
 }
 
-int test__get_inner_xml(string* xml_str,const char* tag) {
+int test__get_inner_xml(string_t* xml_str,const char* tag) {
     int count;
     
-    string* result=string__alloc("");
+    string_t* result=string__alloc("");
     count = xml_parser__find_elements_by_tag_text(xml_str, tag, result);
 
     if (count < 0) {
@@ -57,7 +57,7 @@ int test__get_inner_xml(string* xml_str,const char* tag) {
     } else {
         printf("Found %d occurences of <%s></%s> :  [%s]\n", count,tag,tag, result->buffer);
 
-        string* inner_xml=string__alloc("");
+        string_t* inner_xml=string__alloc("");
         int error = xml_parser__get_inner_xml(result, inner_xml);
 
         if (error < 0) {
@@ -75,8 +75,8 @@ int test__get_inner_xml(string* xml_str,const char* tag) {
 int test__xml_parser() {
     const char* xml = "<root><name>John</name><age>30</age><com><com id=\"1\">john</com><com id=\"2\">yes</com><com id=\"3\">HDYD?</com></com></root>";
 
-    // Create a string object from the XML
-    string* xml_str = string__alloc(xml);
+    // Create a string_t object from the XML
+    string_t* xml_str = string__alloc(xml);
 
     test__find_by_tag(xml_str,"name");
 
